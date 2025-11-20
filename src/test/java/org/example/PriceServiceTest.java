@@ -66,20 +66,6 @@ public class PriceServiceTest {
     }
 
     @Test
-    void testFinalTotal_NoCoupon() {
-        CouponService couponService = new CouponService();
-        GSTService gstService = new GSTService();
-        PriceService priceService = new PriceService(couponService, gstService);
-
-        Item item = new Item("C1", "Milk", 100, 5);
-        CartItem cartItem = new CartItem(item, 1);
-
-        double total = priceService.calculateFinalTotal(List.of(cartItem), null);
-
-        assertEquals(105.0, total);
-    }
-
-    @Test
     void testFinalTotal_DiscountCannotExceedSubtotal() {
         CouponService couponService = new CouponService();
         GSTService gstService = new GSTService();
@@ -101,4 +87,51 @@ public class PriceServiceTest {
 
         assertEquals(expected, total);
     }
+
+    @Test
+    void testFinalTotal_NoItems() {
+        CouponService couponService = new CouponService();
+        GSTService gstService = new GSTService();
+        PriceService priceService = new PriceService(couponService, gstService);
+
+        double total = priceService.calculateFinalTotal(List.of(), null);
+        assertEquals(0.0, total);
+    }
+
+    @Test
+    void testFinalTotal_NoCoupon() {
+        CouponService couponService = new CouponService();
+        GSTService gstService = new GSTService();
+        PriceService priceService = new PriceService(couponService, gstService);
+
+        Item item = new Item("A1", "Apple", 100, 5);
+        CartItem cartItem = new CartItem(item, 2);   // 200 subtotal
+
+        double total = priceService.calculateFinalTotal(List.of(cartItem), null);
+
+        assertEquals(210.0, total);  // 200 + 10 GST
+    }
+
+//    @Test
+//    void testFinalTotal_FlatCoupon() {
+//        CouponService couponService = new CouponService();
+//        GSTService gstService = new GSTService();
+//        PriceService priceService = new PriceService(couponService, gstService);
+//
+//        Item item = new Item("B1", "Banana", 50, 10);
+//        CartItem ci = new CartItem(item, 4);  // 200 subtotal
+//
+//        Coupon coupon = new Coupon(
+//                "FLAT50",
+//                Coupon.Type.FLAT,
+//                50,
+//                0,
+//                LocalDate.now().plusDays(3)
+//        );
+//
+//        double total = priceService.calculateFinalTotal(List.of(ci), coupon);
+//
+//        // 200 subtotal - 50 = 150 + 15 GST = 165
+//        assertEquals(165.0, total);
+//    }
 }
