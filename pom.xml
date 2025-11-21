@@ -48,11 +48,13 @@
                 <version>1.15.0</version>
                 <configuration>
                     <!-- Packages to mutate -->
+                    <!-- Only mutate these packages -->
                     <targetClasses>
-                        <param>org.example.*</param>
+                        <param>org.example.model.*</param>
+                        <param>org.example.service.*</param>
                     </targetClasses>
 
-                    <!-- Packages where tests exist -->
+                    <!-- Only test these packages -->
                     <targetTests>
                         <param>org.example.*</param>
                     </targetTests>

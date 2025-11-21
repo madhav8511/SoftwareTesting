@@ -1,5 +1,8 @@
 package org.example.model;
 
+import java.util.*;
+
+
 public class CartItem {
     private Item item;
     private int quantity;
