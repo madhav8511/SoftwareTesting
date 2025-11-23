@@ -1,0 +1,17 @@
+package org.example.payment;
+
+public abstract class PaymentService {
+
+    /**
+     * Processes a payment of a given amount.
+     * Concrete classes must implement their own logic.
+     */
+    public abstract PaymentResult processPayment(double amount);
+
+    /**
+     * A simple utility method that all children can use.
+     */
+    protected boolean validateAmount(double amount) {
+        return amount > 0;
+    }
+}

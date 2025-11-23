@@ -7,6 +7,11 @@ import org.example.service.CartService;
 import org.example.service.CouponService;
 import org.example.service.GSTService;
 import org.example.service.PriceService;
+import org.example.payment.PaymentResult;
+import org.example.payment.PaymentService;
+import org.example.payment.CardPaymentService;
+import org.example.payment.UPIPaymentService;
+import org.example.payment.CashPaymentService;
 
 import java.time.LocalDate;
 import java.util.Map;
@@ -70,7 +75,8 @@ public class Main {
             System.out.println("7. Remove coupon");
             System.out.println("8. View cart");
             System.out.println("9. View final bill");
-            System.out.println("10. Clear cart");
+            System.out.println("10. Choose Payment Type");
+            System.out.println("11. Clear cart");
             System.out.println("0. Exit");
             System.out.print("Choose: ");
 
@@ -155,6 +161,57 @@ public class Main {
                     break;
 
                 case 10:
+                    System.out.println("Select Payment Method:");
+                    System.out.println("1. Card");
+                    System.out.println("2. UPI");
+                    System.out.println("3. Cash");
+                    int p = sc.nextInt();
+                    sc.nextLine();
+
+                    PaymentService paymentStrategy = null;
+
+                    switch (p) {
+                        case 1 -> {
+                            System.out.print("Enter Card Number: ");
+                            String card = sc.nextLine();
+                            paymentStrategy = new CardPaymentService(card);
+                            System.out.println("Card payment method selected.");
+                        }
+                        case 2 -> {
+                            System.out.print("Enter UPI ID: ");
+                            String upi = sc.nextLine();
+                            paymentStrategy = new UPIPaymentService(upi);
+                            System.out.println("UPI payment method selected.");
+                        }
+                        case 3 -> {
+                            paymentStrategy = new CashPaymentService();
+                            System.out.println("Cash payment selected.");
+                        }
+                        default -> System.out.println("Invalid option");
+                    }
+
+                    if (paymentStrategy != null) {
+                        double subtotal_ = cartService.getSubtotal();
+                        double finalTotal_ = priceService.calculateFinalTotal(
+                                cartService.getItems().values(),
+                                appliedCoupon
+                        );
+
+                        PaymentResult paymentResult = paymentStrategy.processPayment(finalTotal_);
+                        if (paymentResult != null) {
+                            if (paymentResult.getStatus()) {
+                                System.out.println("Payment successful.");
+                                cartService.clear();
+                                appliedCoupon = null;
+                                paymentStrategy = null;
+                            } else {
+                                System.out.println("Payment failed.");
+                            }
+                        }
+                    }
+                    break;
+
+                case 11:
                     cartService.clear();
                     appliedCoupon = null;
                     System.out.println("Cart cleared.");
