@@ -12,10 +12,14 @@ import org.example.payment.PaymentService;
 import org.example.payment.CardPaymentService;
 import org.example.payment.UPIPaymentService;
 import org.example.payment.CashPaymentService;
+import org.example.payment.PaymentReceipt;
+import org.example.payment.PaymentMethod;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.UUID;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
@@ -169,22 +173,26 @@ public class Main {
                     sc.nextLine();
 
                     PaymentService paymentStrategy = null;
+                    PaymentMethod paymentMethod = null;
 
                     switch (p) {
                         case 1 -> {
                             System.out.print("Enter Card Number: ");
                             String card = sc.nextLine();
                             paymentStrategy = new CardPaymentService(card);
+                            paymentMethod = PaymentMethod.CARD;
                             System.out.println("Card payment method selected.");
                         }
                         case 2 -> {
                             System.out.print("Enter UPI ID: ");
                             String upi = sc.nextLine();
                             paymentStrategy = new UPIPaymentService(upi);
+                            paymentMethod = PaymentMethod.UPI;
                             System.out.println("UPI payment method selected.");
                         }
                         case 3 -> {
                             paymentStrategy = new CashPaymentService();
+                            paymentMethod = PaymentMethod.CASH;
                             System.out.println("Cash payment selected.");
                         }
                         default -> System.out.println("Invalid option");
@@ -201,9 +209,19 @@ public class Main {
                         if (paymentResult != null) {
                             if (paymentResult.getStatus()) {
                                 System.out.println("Payment successful.");
+                                PaymentReceipt paymentReceipt = new PaymentReceipt(
+                                        UUID.randomUUID().toString(),
+                                        LocalDateTime.now(),
+                                        paymentMethod,
+                                        subtotal_,
+                                        finalTotal_ - subtotal_,
+                                        finalTotal_
+                                        );
+                                System.out.println(paymentReceipt.toString());
                                 cartService.clear();
                                 appliedCoupon = null;
                                 paymentStrategy = null;
+                                paymentMethod = null;
                             } else {
                                 System.out.println("Payment failed.");
                             }
