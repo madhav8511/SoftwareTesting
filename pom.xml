@@ -52,6 +52,7 @@
                     <targetClasses>
                         <param>org.example.model.*</param>
                         <param>org.example.service.*</param>
+                        <param>org.example.payment.*</param>
                     </targetClasses>
 
                     <!-- Only test these packages -->

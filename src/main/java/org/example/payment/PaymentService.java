@@ -11,7 +11,7 @@ public abstract class PaymentService {
     /**
      * A simple utility method that all children can use.
      */
-    protected boolean validateAmount(double amount) {
+    public boolean validateAmount(double amount) {
         return amount > 0;
     }
 }
