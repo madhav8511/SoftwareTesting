@@ -17,7 +17,8 @@ class PaymentReceiptTest {
         PaymentMethod method = PaymentMethod.CARD;
         double originalAmount = 100.0;
         double taxAmount = 18.0;
-        double finalAmount = 118.0;
+        double discount = 10.0;
+        double finalAmount = 108.0;
 
         PaymentReceipt receipt = new PaymentReceipt(
                 receiptId,
@@ -25,6 +26,7 @@ class PaymentReceiptTest {
                 method,
                 originalAmount,
                 taxAmount,
+                discount,
                 finalAmount
         );
 
@@ -43,7 +45,8 @@ class PaymentReceiptTest {
         PaymentMethod method = PaymentMethod.UPI;
         double originalAmount = 500.0;
         double taxAmount = 90.0;
-        double finalAmount = 590.0;
+        double discount = 20.0;
+        double finalAmount = 570.0;
 
         PaymentReceipt receipt = new PaymentReceipt(
                 receiptId,
@@ -51,6 +54,7 @@ class PaymentReceiptTest {
                 method,
                 originalAmount,
                 taxAmount,
+                discount,
                 finalAmount
         );
 
@@ -62,6 +66,7 @@ class PaymentReceiptTest {
         assertTrue(result.contains(method.toString()));
         assertTrue(result.contains(String.valueOf(originalAmount)));
         assertTrue(result.contains(String.valueOf(taxAmount)));
+        assertTrue(result.contains(String.valueOf(discount)));
         assertTrue(result.contains(String.valueOf(finalAmount)));
     }
 
@@ -73,13 +78,15 @@ class PaymentReceiptTest {
                 PaymentMethod.CASH,
                 100,
                 18,
-                118
+                5,
+                113
         );
 
         String text = receipt.toString();
 
         assertNotNull(text);
         assertFalse(text.isBlank());
+        assertTrue(text.contains("RECEIPT"));
     }
 
     @Test
@@ -91,7 +98,8 @@ class PaymentReceiptTest {
                 PaymentMethod.CARD,
                 10,
                 1.8,
-                11.8
+                1.0,
+                10.8
         );
 
         // Ensures getters return same values every time (immutability)
@@ -100,6 +108,6 @@ class PaymentReceiptTest {
         assertEquals(PaymentMethod.CARD, receipt.getMethod());
         assertEquals(10, receipt.getOriginalAmount());
         assertEquals(1.8, receipt.getTaxAmount());
-        assertEquals(11.8, receipt.getFinalAmount());
+        assertEquals(10.8, receipt.getFinalAmount());
     }
 }

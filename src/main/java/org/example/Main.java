@@ -24,6 +24,71 @@ import java.util.UUID;
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
+
+    private static CartService cartService = new CartService();
+    private static CouponService couponService = new CouponService();
+    private static GSTService gstService = new GSTService();
+    private static PriceService priceService = new PriceService(couponService, gstService);
+
+    private static Item getItemByCode(String code, Item... items) {
+        for (Item i : items) {
+            if (i.getCode().equalsIgnoreCase(code)) return i;
+        }
+        return null;
+    }
+
+    private static Coupon getCouponByCode(String code, Coupon... coupons) {
+        for (Coupon c : coupons) {
+            if (c.getCode().equalsIgnoreCase(code)) return c;
+        }
+        return null;
+    }
+
+    private static void printItems(Item[] items) {
+        System.out.println("\n======= Available Items =======");
+        for (Item i : items) {
+            System.out.println(i.getCode() + " - " + i.getName() +
+                    " | ₹" + i.getPrice() + " | GST: " + i.getGstPercent() + "%");
+        }
+    }
+
+    private static void printCoupons(Coupon[] coupons) {
+        System.out.println("\n======= Available Coupons =======");
+        for (Coupon c : coupons) {
+            System.out.println(c.getCode() + " - " + c.getType() +
+                    " | Value: " + c.getValue() +
+                    " | Min Cart: ₹" + c.getMinCartValue() +
+                    " | Expiry: " + c.getExpiry());
+        }
+    }
+
+    private static void printCart(Map<String, CartItem> cart) {
+        if (cart.isEmpty()) {
+            System.out.println("Cart is empty.");
+            return;
+        }
+
+        System.out.println("\n======= Your Cart =======");
+        for (CartItem ci : cart.values()) {
+            System.out.println(ci.getItem().getName() + " x " + ci.getQuantity() +
+                    " = ₹" + ci.getTotalPrice());
+        }
+    }
+
+    private static void showBill(CartService cartService, PriceService priceService, Coupon appliedCoupon) {
+        double subtotal = cartService.getSubtotal();
+        double discount = couponService.getDiscount(appliedCoupon,subtotal);
+        double gst = gstService.calculateTotalGST(cartService.getItems().values());
+        double finalTotal = subtotal - discount + gst;
+
+        System.out.println("\n======= Final Bill =======");
+        System.out.println("Subtotal : ₹" + subtotal);
+        System.out.println("Discount : ₹" + discount);
+        System.out.println("GST      : ₹" + gst);
+        System.out.println("-------------------------");
+        System.out.println("Final Total : ₹" + finalTotal);
+    }
+
     public static void main(String[] args) {
 
         // ------------------------
@@ -32,6 +97,9 @@ public class Main {
         Item iphone = new Item("I01", "iPhone 15", 80000, 18);
         Item caseCover = new Item("A11", "Case Cover", 600, 12);
         Item charger = new Item("C22", "Fast Charger", 1800, 18);
+        Item macbook = new Item("M01", "MacBook Air", 100250, 28);
+
+        Item[] allItems = {iphone, caseCover, charger,macbook};
 
         // ------------------------
         // HARD-CODED COUPONS
@@ -52,13 +120,7 @@ public class Main {
                 LocalDate.now().plusDays(10)
         );
 
-        // ------------------------
-        // SERVICES
-        // ------------------------
-        CartService cartService = new CartService();
-        CouponService couponService = new CouponService();
-        GSTService gstService = new GSTService();
-        PriceService priceService = new PriceService(couponService, gstService);
+        Coupon[] allCoupons = {newuser, percent5};
 
         Coupon appliedCoupon = null;
         Scanner sc = new Scanner(System.in);
@@ -70,11 +132,11 @@ public class Main {
             System.out.println("\n===============================");
             System.out.println("       SHOPPING CART MENU");
             System.out.println("===============================");
-            System.out.println("1. Add iPhone");
-            System.out.println("2. Add Case Cover");
-            System.out.println("3. Add Charger");
-            System.out.println("4. Reduce quantity");
-            System.out.println("5. Remove item completely");
+            System.out.println("1. View Item");
+            System.out.println("2. Add Item to Cart");
+            System.out.println("3. Reduce quantity");
+            System.out.println("4. Remove item completely");
+            System.out.println("5. View All Coupon");
             System.out.println("6. Apply coupon");
             System.out.println("7. Remove coupon");
             System.out.println("8. View cart");
@@ -88,24 +150,29 @@ public class Main {
 
             switch (choice) {
                 case 1:
-                    cartService.addItem(iphone, 1);
-                    System.out.println("Added: iPhone");
+                    printItems(allItems);
                     break;
 
                 case 2:
-                    cartService.addItem(caseCover, 1);
-                    System.out.println("Added: Case Cover");
+                    printItems(allItems);
+                    System.out.print("\nEnter item code: ");
+                    String icode = sc.next();
+                    System.out.print("Enter quantity: ");
+                    int qty = sc.nextInt();
+
+                    Item chosenItem = getItemByCode(icode, allItems);
+                    if (chosenItem != null) {
+                        cartService.addItem(chosenItem, qty);
+                        System.out.println("Added " + qty + " x " + chosenItem.getName());
+                    } else {
+                        System.out.println("Invalid item code.");
+                    }
                     break;
 
                 case 3:
-                    cartService.addItem(charger, 1);
-                    System.out.println("Added: Charger");
-                    break;
-
-                case 4:
                     System.out.print("Enter item code to reduce: ");
                     String rcode = sc.next();
-                    Item reduceItem = getItemByCode(rcode, iphone, caseCover, charger);
+                    Item reduceItem = getItemByCode(rcode, allItems);
 
                     if (reduceItem != null) {
                         cartService.reduceItem(reduceItem, 1);
@@ -115,32 +182,28 @@ public class Main {
                     }
                     break;
 
-                case 5:
+                case 4:
                     System.out.print("Enter item code to remove: ");
                     cartService.removeItem(sc.next());
                     System.out.println("Removed item completely.");
                     break;
 
+                case 5:
+                    printCoupons(allCoupons);
+                    break;
+
                 case 6:
-                    System.out.print("Enter coupon code: ");
+                    printCoupons(allCoupons);
+                    System.out.print("Enter coupon code to apply: ");
                     String ccode = sc.next();
 
-                    if (ccode.equalsIgnoreCase(newuser.getCode())) {
-                        if (couponService.validateCoupon(newuser)) {
-                            appliedCoupon = newuser;
-                            System.out.println("Applied coupon NEW1000");
-                        } else {
-                            System.out.println("Coupon invalid.");
-                        }
-                    } else if (ccode.equalsIgnoreCase(percent5.getCode())) {
-                        if (couponService.validateCoupon(percent5)) {
-                            appliedCoupon = percent5;
-                            System.out.println("Applied coupon SAVE5");
-                        } else {
-                            System.out.println("Coupon invalid.");
-                        }
+                    Coupon chosen = getCouponByCode(ccode, allCoupons);
+
+                    if (chosen != null && couponService.validateCoupon(chosen)) {
+                        appliedCoupon = chosen;
+                        System.out.println("Applied coupon: " + chosen.getCode());
                     } else {
-                        System.out.println("Unknown coupon.");
+                        System.out.println("Invalid or expired coupon.");
                     }
                     break;
 
@@ -154,14 +217,7 @@ public class Main {
                     break;
 
                 case 9:
-                    double subtotal = cartService.getSubtotal();
-                    double finalTotal = priceService.calculateFinalTotal(
-                            cartService.getItems().values(),
-                            appliedCoupon
-                    );
-
-                    System.out.println("\nSubtotal: ₹" + subtotal);
-                    System.out.println("Final Total: ₹" + finalTotal);
+                    showBill(cartService, priceService, appliedCoupon);
                     break;
 
                 case 10:
@@ -199,13 +255,15 @@ public class Main {
                     }
 
                     if (paymentStrategy != null) {
-                        double subtotal_ = cartService.getSubtotal();
-                        double finalTotal_ = priceService.calculateFinalTotal(
+                        double subtotal = cartService.getSubtotal();
+                        double finalTotal = priceService.calculateFinalTotal(
                                 cartService.getItems().values(),
                                 appliedCoupon
                         );
+                        double gst = gstService.calculateTotalGST(cartService.getItems().values());
+                        double discount = couponService.getDiscount(appliedCoupon,subtotal);
 
-                        PaymentResult paymentResult = paymentStrategy.processPayment(finalTotal_);
+                        PaymentResult paymentResult = paymentStrategy.processPayment(finalTotal);
                         if (paymentResult != null) {
                             if (paymentResult.getStatus()) {
                                 System.out.println("Payment successful.");
@@ -213,9 +271,10 @@ public class Main {
                                         UUID.randomUUID().toString(),
                                         LocalDateTime.now(),
                                         paymentMethod,
-                                        subtotal_,
-                                        finalTotal_ - subtotal_,
-                                        finalTotal_
+                                        subtotal,
+                                        gst,
+                                        discount,
+                                        finalTotal
                                         );
                                 System.out.println(paymentReceipt.toString());
                                 cartService.clear();
@@ -242,26 +301,6 @@ public class Main {
                 default:
                     System.out.println("Invalid choice.");
             }
-        }
-    }
-
-    private static Item getItemByCode(String code, Item... items) {
-        for (Item i : items) {
-            if (i.getCode().equalsIgnoreCase(code)) return i;
-        }
-        return null;
-    }
-
-    private static void printCart(Map<String, CartItem> cart) {
-        if (cart.isEmpty()) {
-            System.out.println("Cart is empty.");
-            return;
-        }
-
-        System.out.println("\nYour Cart:");
-        for (CartItem ci : cart.values()) {
-            System.out.println(ci.getItem().getName() + " x " + ci.getQuantity() +
-                    " = ₹" + ci.getTotalPrice());
         }
     }
 }

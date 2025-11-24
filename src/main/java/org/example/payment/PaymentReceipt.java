@@ -8,6 +8,7 @@ public class PaymentReceipt {
     private final PaymentMethod method;
     private final double originalAmount;
     private final double taxAmount;
+    private final double discountAmount;
     private final double finalAmount;
 
     public PaymentReceipt(String receiptId,
@@ -15,12 +16,14 @@ public class PaymentReceipt {
                           PaymentMethod method,
                           double originalAmount,
                           double taxAmount,
+                          double discount,
                           double finalAmount) {
         this.receiptId = receiptId;
         this.timestamp = timestamp;
         this.method = method;
         this.originalAmount = originalAmount;
         this.taxAmount = taxAmount;
+        this.discountAmount = discount;
         this.finalAmount = finalAmount;
     }
 
@@ -57,7 +60,8 @@ public class PaymentReceipt {
                 "Timestamp : " + timestamp + "\n" +
                 "Method    : " + method + "\n" +
                 "Amount    : " + originalAmount + "\n" +
-                "GST (18%) : " + taxAmount + "\n" +
+                "Discount : " + discountAmount + "\n" +
+                "GST : " + taxAmount + "\n" +
                 "Final Amt : " + finalAmount + "\n" +
                 "----------------------";
     }
