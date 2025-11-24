@@ -1,18 +1,22 @@
 package org.example.payment;
 
 import java.util.*;
-
+// Class for payment status
 public class PaymentResult {
+
+    //class fields
     private final boolean status;
     private final String message;
     private final double amount;
 
+    //constructor
     public PaymentResult(boolean status, String message, double amount) {
         this.status = status;
         this.message = message;
         this.amount = amount;
     }
 
+    //Getter and Setter
     public boolean getStatus() {
         return status;
     }
@@ -25,6 +29,7 @@ public class PaymentResult {
         return amount;
     }
 
+    //Method to print payment status
     @Override
     public String toString() {
         return "PaymentResult{" +

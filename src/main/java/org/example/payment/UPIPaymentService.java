@@ -1,13 +1,17 @@
 package org.example.payment;
 
+// Inherit class for upi payment type
 public class UPIPaymentService extends PaymentService {
 
+    //class field
     private String upiId;
 
+    //constructor
     public UPIPaymentService(String upiId) {
         this.upiId = upiId;
     }
 
+    // method logic for cash payment type
     @Override
     public PaymentResult processPayment(double amount) {
         if (!validateAmount(amount)) {

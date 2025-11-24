@@ -1,11 +1,14 @@
 package org.example.model;
 
+// class items for objects in cart
 public class Item {
+    //class fields
     private String code;
     private String name;
     private double price;
     private double gstPercent;
 
+    //constructor
     public Item(String code, String name, double price, double gstPercent) {
         if (code == null || code.isEmpty()) throw new IllegalArgumentException("code required");
         this.code = code;
@@ -14,6 +17,7 @@ public class Item {
         this.gstPercent = gstPercent;
     }
 
+    //Getter and Setter
     public String getCode() {
         return code;
     }
@@ -48,6 +52,8 @@ public class Item {
         this.gstPercent = gstPercent;
     }
 
+
+    //Overriding function to display object
     @Override
     public String toString() {
         return "Item{" + code + ", " + name + ", price=" + price + ", gst=" + gstPercent + "}";

@@ -1,5 +1,6 @@
 package org.example.payment;
 
+// Parent class for different type of payments methods.
 public abstract class PaymentService {
 
     /**

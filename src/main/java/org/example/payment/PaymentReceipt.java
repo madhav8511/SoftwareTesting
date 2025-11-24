@@ -2,7 +2,10 @@ package org.example.payment;
 
 import java.time.LocalDateTime;
 
+// Class for printing receipt after payment
 public class PaymentReceipt {
+
+    //class fields
     private final String receiptId;
     private final LocalDateTime timestamp;
     private final PaymentMethod method;
@@ -11,6 +14,7 @@ public class PaymentReceipt {
     private final double discountAmount;
     private final double finalAmount;
 
+    // constructor
     public PaymentReceipt(String receiptId,
                           LocalDateTime timestamp,
                           PaymentMethod method,
@@ -27,6 +31,7 @@ public class PaymentReceipt {
         this.finalAmount = finalAmount;
     }
 
+    // Getter and Setter
     public String getReceiptId() {
         return receiptId;
     }
@@ -51,6 +56,7 @@ public class PaymentReceipt {
         return finalAmount;
     }
 
+    //Overriding method to print receipt
     @Override
     public String toString() {
         return "----------------------\n" +

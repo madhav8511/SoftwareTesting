@@ -5,16 +5,21 @@ import org.example.model.Coupon;
 
 import java.util.Collection;
 
+// Service to implement prices operations.
 public class PriceService {
 
+
+    // Required two service
     private final CouponService couponService;
     private final GSTService gstService;
 
+    // Constructor
     public PriceService(CouponService couponService, GSTService gstService) {
         this.couponService = couponService;
         this.gstService = gstService;
     }
 
+    // Function to calculate total cart value after applying discount and tax.
     public double calculateFinalTotal(Collection<CartItem> items, Coupon coupon) {
 
         double subtotal = items.stream()

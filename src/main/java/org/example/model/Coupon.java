@@ -3,7 +3,10 @@ package org.example.model;
 import java.time.LocalDate;
 import java.util.Objects;
 
+// class for coupon objects
 public class Coupon {
+
+    // object fields
     public enum Type { FLAT, PERCENT }
     private String code;
     private Type type;
@@ -11,6 +14,7 @@ public class Coupon {
     private double minCartValue;
     private LocalDate expiry;
 
+    //constructor
     public Coupon(String code, Type type, double value, double minCartValue, LocalDate expiry) {
         if (code == null || code.isEmpty()) throw new IllegalArgumentException("coupon code required");
         Objects.requireNonNull(type);
@@ -21,6 +25,7 @@ public class Coupon {
         this.expiry = expiry;
     }
 
+    //Getter and setter
     public String getCode() {
         return code;
     }
@@ -62,11 +67,13 @@ public class Coupon {
         this.code = code;
     }
 
+    // Validity check
     public boolean isExpired() {
         if (expiry == null) return false;
         return expiry.isBefore(LocalDate.now());
     }
 
+    // overriding function to display
     @Override
     public String toString() {
         return "Coupon{" + code + ", " + type + ", val=" + value + ", min=" + minCartValue + ", expiry=" + expiry + "}";
