@@ -9,13 +9,18 @@ public class GSTService {
 
     // Function to calculate tax per item.
     public double calculateGST(CartItem item) {
+        // null item check
         if (item == null) return 0.0;
+
         double price = item.getTotalPrice();
+
         return (price * item.getItem().getGstPercent()) / 100.0;
     }
 
     // Function to return total Cart tax.
     public double calculateTotalGST(Collection<CartItem> items) {
+        if (items == null) return 0.0;
+
         return items.stream()
                 .mapToDouble(this::calculateGST)
                 .sum();

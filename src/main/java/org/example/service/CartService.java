@@ -15,20 +15,26 @@ public class CartService {
 
     // Fucntion to add item to cart
     public void addItem(Item item, int qty) {
+        // null item check
         if (item == null) throw new IllegalArgumentException("Item cannot be null");
+
+        // negative quantity check
         if (qty <= 0) throw new IllegalArgumentException("Quantity must be > 0");
 
         CartItem existing = cart.get(item.getCode());
         if (existing != null) {
             existing.increment(qty);
-        } else {
+        }
+        else {
             cart.put(item.getCode(), new CartItem(item, qty));
         }
     }
 
     //Function to reduce item
     public void reduceItem(Item item, int qty) {
+        // null item check
         if (item == null) throw new IllegalArgumentException("Item cannot be null");
+        // negative quantity check
         if (qty <= 0) throw new IllegalArgumentException("Quantity must be > 0");
 
         CartItem existing = cart.get(item.getCode());
@@ -43,6 +49,7 @@ public class CartService {
 
     // Function to remove item completely
     public void removeItem(String code) {
+
         cart.remove(code);
     }
 
@@ -56,11 +63,13 @@ public class CartService {
 
     // Function to return whole cart map
     public Map<String, CartItem> getItems() {
+
         return cart;
     }
 
     // Remove all items from cart
     public void clear() {
+
         cart.clear();
     }
 }

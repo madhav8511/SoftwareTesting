@@ -5,8 +5,11 @@ import java.util.*;
 public class PaymentResult {
 
     //class fields
+    // true or false denoting payment status
     private final boolean status;
+    // string message
     private final String message;
+    // final amount to be paid
     private final double amount;
 
     //constructor
@@ -32,6 +35,7 @@ public class PaymentResult {
     //Method to print payment status
     @Override
     public String toString() {
+
         return "PaymentResult{" +
                 "status=" + status +
                 ", message='" + message + '\'' +

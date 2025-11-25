@@ -12,7 +12,9 @@ public abstract class PaymentService {
     /**
      * A simple utility method that all children can use.
      */
+
     public boolean validateAmount(double amount) {
+        // payment validation
         return amount > 0;
     }
 }

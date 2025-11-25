@@ -6,12 +6,17 @@ import java.util.*;
 public class CartItem {
 
     //private fields
+
+    // item defined in another model
     private Item item;
+    // int
     private int quantity;
 
     // constructor
     public CartItem(Item item, int quantity) {
+        // null item check
         if (item == null) throw new IllegalArgumentException("item required");
+
         this.item = item;
         this.quantity = Math.max(0, quantity);
     }
@@ -26,7 +31,9 @@ public class CartItem {
     }
 
     public void setItem(Item item) {
+        // null item check
         if (item == null) throw new IllegalArgumentException("item required");
+
         this.item = item;
     }
 
@@ -52,6 +59,7 @@ public class CartItem {
     //Overriding function to return display
     @Override
     public String toString() {
+
         return "CartItem{" + item.getCode() + ", qty=" + quantity + "}";
     }
 }

@@ -25,11 +25,16 @@ import java.util.UUID;
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
 
+    // importing cartservice
     private static CartService cartService = new CartService();
+    // importing couponservice
     private static CouponService couponService = new CouponService();
+    // importing gst service
     private static GSTService gstService = new GSTService();
+    // importing price service
     private static PriceService priceService = new PriceService(couponService, gstService);
 
+    // return the item with the help of the code
     private static Item getItemByCode(String code, Item... items) {
         for (Item i : items) {
             if (i.getCode().equalsIgnoreCase(code)) return i;
@@ -37,6 +42,7 @@ public class Main {
         return null;
     }
 
+    // returns the coupon by the code
     private static Coupon getCouponByCode(String code, Coupon... coupons) {
         for (Coupon c : coupons) {
             if (c.getCode().equalsIgnoreCase(code)) return c;
@@ -44,6 +50,7 @@ public class Main {
         return null;
     }
 
+    // printing items for the user
     private static void printItems(Item[] items) {
         System.out.println("\n======= Available Items =======");
         for (Item i : items) {
@@ -52,6 +59,7 @@ public class Main {
         }
     }
 
+    // printing coupons
     private static void printCoupons(Coupon[] coupons) {
         System.out.println("\n======= Available Coupons =======");
         for (Coupon c : coupons) {
@@ -62,6 +70,7 @@ public class Main {
         }
     }
 
+    // printing the cart
     private static void printCart(Map<String, CartItem> cart) {
         if (cart.isEmpty()) {
             System.out.println("Cart is empty.");
@@ -69,16 +78,21 @@ public class Main {
         }
 
         System.out.println("\n======= Your Cart =======");
+
         for (CartItem ci : cart.values()) {
             System.out.println(ci.getItem().getName() + " x " + ci.getQuantity() +
                     " = ₹" + ci.getTotalPrice());
         }
     }
 
+    // showing bill
     private static void showBill(CartService cartService, PriceService priceService, Coupon appliedCoupon) {
         double subtotal = cartService.getSubtotal();
+
         double discount = couponService.getDiscount(appliedCoupon,subtotal);
+
         double gst = gstService.calculateTotalGST(cartService.getItems().values());
+
         double finalTotal = subtotal - discount + gst;
 
         System.out.println("\n======= Final Bill =======");
@@ -94,12 +108,30 @@ public class Main {
         // ------------------------
         // HARD-CODED ITEMS
         // ------------------------
+
         Item iphone = new Item("I01", "iPhone 15", 80000, 18);
         Item caseCover = new Item("A11", "Case Cover", 600, 12);
         Item charger = new Item("C22", "Fast Charger", 1800, 18);
         Item macbook = new Item("M01", "MacBook Air", 100250, 28);
 
-        Item[] allItems = {iphone, caseCover, charger,macbook};
+        Item ipad = new Item("I02", "iPad Air", 65000, 18);
+        Item airpods = new Item("A12", "AirPods Pro", 24990, 18);
+        Item keyboard = new Item("A13", "Wireless Keyboard", 4500, 18);
+        Item mouse = new Item("A14", "Wireless Mouse", 2500, 18);
+        Item watch = new Item("W01", "Apple Watch Series 9", 41990, 18);
+        Item tv = new Item("T01", "Smart TV 55-inch", 52000, 28);
+        Item speaker = new Item("S01", "Bluetooth Speaker", 3500, 18);
+        Item powerBank = new Item("P01", "Power Bank 20000mAh", 2200, 18);
+        Item laptopBag = new Item("B01", "Laptop Bag", 1500, 12);
+        Item screenGuard = new Item("A15", "Screen Guard", 299, 12);
+        Item usbCable = new Item("C23", "USB-C Cable", 799, 18);
+
+        Item[] allItems = {
+                iphone, caseCover, charger, macbook,
+                ipad, airpods, keyboard, mouse,
+                watch, tv, speaker, powerBank,
+                laptopBag, screenGuard, usbCable
+        };
 
         // ------------------------
         // HARD-CODED COUPONS
@@ -120,9 +152,48 @@ public class Main {
                 LocalDate.now().plusDays(10)
         );
 
-        Coupon[] allCoupons = {newuser, percent5};
+// Additional coupons
+        Coupon festival10 = new Coupon(
+                "FEST10",
+                Coupon.Type.PERCENT,
+                10,
+                5000,
+                LocalDate.now().plusDays(15)
+        );
+
+        Coupon flat500 = new Coupon(
+                "FLAT500",
+                Coupon.Type.FLAT,
+                500,
+                1500,
+                LocalDate.now().plusDays(7)
+        );
+
+        Coupon mega20 = new Coupon(
+                "MEGA20",
+                Coupon.Type.PERCENT,
+                20,
+                10000,
+                LocalDate.now().plusDays(20)
+        );
+
+        Coupon welcome150 = new Coupon(
+                "WELCOME150",
+                Coupon.Type.FLAT,
+                150,
+                500,
+                LocalDate.now().plusDays(30)
+        );
+
+        Coupon[] allCoupons = {
+                newuser, percent5,
+                festival10, flat500,
+                mega20, welcome150
+        };
+
 
         Coupon appliedCoupon = null;
+
         Scanner sc = new Scanner(System.in);
 
         // ------------------------
