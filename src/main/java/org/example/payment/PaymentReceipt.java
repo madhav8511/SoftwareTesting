@@ -2,7 +2,9 @@ package org.example.payment;
 
 import java.time.LocalDateTime;
 
+// Class to generate payment receipt
 public class PaymentReceipt {
+    // Private Fields
     private final String receiptId;
     private final LocalDateTime timestamp;
     private final PaymentMethod method;
@@ -11,6 +13,7 @@ public class PaymentReceipt {
     private final double discountAmount;
     private final double finalAmount;
 
+    // Constructor
     public PaymentReceipt(String receiptId,
                           LocalDateTime timestamp,
                           PaymentMethod method,
@@ -26,6 +29,8 @@ public class PaymentReceipt {
         this.discountAmount = discount;
         this.finalAmount = finalAmount;
     }
+
+    // Getters and Setters
 
     public String getReceiptId() {
         return receiptId;
@@ -51,6 +56,7 @@ public class PaymentReceipt {
         return finalAmount;
     }
 
+    // Overriding Function to display receipt
     @Override
     public String toString() {
         return "----------------------\n" +
